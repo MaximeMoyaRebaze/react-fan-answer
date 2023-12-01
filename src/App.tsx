@@ -74,7 +74,28 @@ const App: React.FC = () => {
   };
 
   // INITIALIZE PEER CONNECTION WITH LOCAL STREAM :
-  const initializePeerConnection = () => {
+  const initializePeerConnection = async () => {
+
+    const roomId = '10'
+    try {
+      const response = await fetch(serverUrl + "save-room-with-offer/" + roomId, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': ''
+        }
+      });
+      if (!response.ok) {
+        throw new Error('Request failed');
+      }
+      const data = await response.json();
+      console.log("Fetch save caller candidates response : ", data);
+    } catch (error) {
+      console.error('An error occurred:', error);
+      throw error;
+    }
+    // const roomOffer = 
+
     const peerConnection = new RTCPeerConnection(configurationIceServer);
 
     peerConnection.addEventListener('icecandidate', async (event: RTCPeerConnectionIceEvent) => {
