@@ -78,13 +78,6 @@ const App: React.FC = () => {
 
       });
 
-      const remoteStream = new MediaStream();
-
-      if (remoteVideoRef.current) {
-        console.log("REMOTE_VIDEO_REF", remoteVideoRef.current);
-        remoteVideoRef.current.srcObject = remoteStream;
-      }
-
     };
 
     initializeMediaStream(peerConnection, socket);
