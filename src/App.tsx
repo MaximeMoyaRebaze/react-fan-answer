@@ -34,10 +34,13 @@ const App: React.FC = () => {
     });
 
     const initializeMediaStream = async (peerConnection: RTCPeerConnection, socket: Socket) => {
+
       const localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
       if (localVideoRef.current) {
         localVideoRef.current.srcObject = localStream;
       }
+
+      const cellphoneId = 'Cellphone_' + uuidv4()
 
       socket.on('fan connected', async (data: { room: { offer: RTCSessionDescription }, candidates: RTCIceCandidate[] }) => {
 
@@ -58,7 +61,7 @@ const App: React.FC = () => {
             sdp: answer.sdp,
           },
         };
-        socket.emit('save room with answer', { room: { answer: roomWithAnswer.answer }, id: 'Cellphone_' + uuidv4() })
+        socket.emit('save room with answer', { room: { answer: roomWithAnswer.answer }, id: cellphoneId })
 
       })
 
@@ -71,7 +74,7 @@ const App: React.FC = () => {
 
       peerConnection.addEventListener('icecandidate', async (event: RTCPeerConnectionIceEvent) => {
         if (event.candidate) {
-          socket.emit('save callee candidate', { id: 'smartphone: 1', candidate: event.candidate })
+          socket.emit('save callee candidate', { candidate: event.candidate, id: cellphoneId })
         } else {
           console.log('ICE candidate gathering completed.');
         }
