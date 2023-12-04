@@ -1,5 +1,5 @@
 import './App.css'
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import io, { Socket } from 'socket.io-client'
 
 const App: React.FC = () => {
@@ -18,19 +18,11 @@ const App: React.FC = () => {
   };
 
   // BACKEND :
-  // const serverUrl = 'http://83.113.50.18:3000/'
   const serverUrlSocket = 'http://83.113.50.18:3001/'
 
   // REF :
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
-  // const remoteVideoRef = useRef<HTMLVideoElement>(null);
-
-  // STATES :
-  // const [localStream, setLocalStream] = useState<MediaStream | null>(null);
-  // const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
-  // const [peerConnection, setPeerConnection] = useState<RTCPeerConnection | null>(null);
-
 
   // INITIALIZE :
   useEffect(() => {
@@ -46,7 +38,6 @@ const App: React.FC = () => {
       if (localVideoRef.current) {
         localVideoRef.current.srcObject = stream;
       }
-      console.log("OK1111");
       await initializePeerConnection(peerConnection, stream, socket);
     };
 
@@ -54,34 +45,12 @@ const App: React.FC = () => {
 
   }, []);
 
-
-
   // INITIALIZE PEER CONNECTION WITH LOCAL STREAM :
   const initializePeerConnection = async (peerConnection: RTCPeerConnection, localStream: MediaStream, socket: Socket) => {
 
-    // const roomId = '10'
+    socket.on('fan connected', async (data: { room: { offer: RTCSessionDescription }, candidates: RTCIceCandidate[] }) => {
 
-    // const response = await fetch(serverUrl + "save-room-with-offer/" + roomId, {
-    //   method: 'GET',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     'Access-Control-Allow-Origin': ''
-    //   }
-    // });
-    // if (!response.ok) {
-    //   throw new Error('Request failed');
-    // }
-    // const data = await response.json();
-    // console.log("Fetch get room with offer : ", data.data);
-
-
-    console.log("OK22222");
-
-    // const peerConnection = new RTCPeerConnection(configurationIceServer);
-
-    socket.on('fan connected', async (data: any) => {
-
-      console.log("SOCKET on send room with offer : ", data);
+      console.log("SOCKET on(fan connected) : ", data);
 
       await peerConnection.setRemoteDescription(new RTCSessionDescription(data.room.offer));
       data.candidates.map(
@@ -91,7 +60,6 @@ const App: React.FC = () => {
         })
 
       const answer = await peerConnection.createAnswer();
-      console.log('Created answer:', answer);
       await peerConnection.setLocalDescription(answer);
       const roomWithAnswer = {
         answer: {
@@ -99,15 +67,9 @@ const App: React.FC = () => {
           sdp: answer.sdp,
         },
       };
-
-      socket.emit('save room with answer', { room: { answer: roomWithAnswer.answer }, id: '10' }, (response: any) => {
-        console.log('Response from socket emit save room with answer : ', response);
-      })
+      socket.emit('save room with answer', { room: { answer: roomWithAnswer.answer }, id: 'uniqueID' })
 
     })
-
-    console.log("OK3333");
-
 
     if (localStream) {
       localStream.getTracks().forEach((track) => {
@@ -156,54 +118,6 @@ const App: React.FC = () => {
       remoteVideoRef.current.srcObject = remoteStream;
     }
 
-    // peerConnection.addEventListener('track', event => {
-    //   console.log('Got remote track:', event.streams[0]);
-    //   event.streams[0].getTracks().forEach(track => {
-    //     console.log('Add a track to the remoteStream:', track);
-    //     remoteStream.addTrack(track);
-    //   });
-    // });
-
-    // await peerConnection.setRemoteDescription(new RTCSessionDescription(data.room.offer));
-
-    // const answer = await peerConnection.createAnswer();
-    // console.log('Created answer:', answer);
-    // await peerConnection.setLocalDescription(answer);
-    // const roomWithAnswer = {
-    //   answer: {
-    //     type: answer.type,
-    //     sdp: answer.sdp,
-    //   },
-    // };
-
-    // const responseSaveAnswer = await fetch(serverUrl + "save-room-with-answer", {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify({ answer: roomWithAnswer.answer, id: "10" }),
-    // });
-    // if (!responseSaveAnswer.ok) {
-    //   throw new Error('Request failed');
-    // }
-    // const dataAnswer: any = await responseSaveAnswer.json();
-    // console.log("Fetch save room with answer : ", dataAnswer);
-
-    socket.emit("get caller candidates")
-    socket.on("send caller candidates", () => {
-
-    })
-
-    // const responseCallerCandidate = await fetch("http://localhost:3000/get-caller-candidates");
-    // const jsonCallerCandidate = await responseCallerCandidate.json();
-    // jsonCallerCandidate.data.map(
-    //   async caller => {
-    //     console.log(`Got new remote ICE candidate: ${JSON.stringify(caller)}`);
-    //     await peerConnection.addIceCandidate(new RTCIceCandidate(caller));
-    //   })
-
-    console.log("OK4444");
-
   };
 
   return (
@@ -212,15 +126,7 @@ const App: React.FC = () => {
         <h1>FAN</h1>
         <h2>Local Video</h2>
         <video ref={localVideoRef} autoPlay playsInline muted />
-
       </div>
-      {/* <div>
-        <h2>Remote Video</h2>
-        <video ref={remoteVideoRef} autoPlay playsInline />
-      </div> */}
-      {/* <button onClick={handleStartBroadcast} disabled={!peerConnection}>
-        Start Broadcast
-      </button> */}
     </div>
   );
 };
