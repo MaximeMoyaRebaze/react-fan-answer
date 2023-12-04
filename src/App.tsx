@@ -103,13 +103,13 @@ const App: React.FC = () => {
       }
     });
     const remoteStream = new MediaStream();
-    peerConnection.addEventListener('track', event => {
-      console.log('Got remote track:', event.streams[0]);
-      event.streams[0].getTracks().forEach(track => {
-        console.log('Add a track to the remoteStream:', track);
-        remoteStream.addTrack(track);
-      });
-    });
+    // peerConnection.addEventListener('track', event => {
+    //   console.log('Got remote track:', event.streams[0]);
+    //   event.streams[0].getTracks().forEach(track => {
+    //     console.log('Add a track to the remoteStream:', track);
+    //     remoteStream.addTrack(track);
+    //   });
+    // });
     if (remoteVideoRef.current) {
       console.log("REMOTE_VIDEO_REF", remoteVideoRef.current);
       remoteVideoRef.current.srcObject = remoteStream;
