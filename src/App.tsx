@@ -34,67 +34,62 @@ const App: React.FC = () => {
     });
 
     const initializeMediaStream = async (peerConnection: RTCPeerConnection, socket: Socket) => {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+      const localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
       if (localVideoRef.current) {
-        localVideoRef.current.srcObject = stream;
+        localVideoRef.current.srcObject = localStream;
       }
-      await initializePeerConnection(peerConnection, stream, socket);
+
+      socket.on('fan connected', async (data: { room: { offer: RTCSessionDescription }, candidates: RTCIceCandidate[] }) => {
+
+        console.log("SOCKET on(fan connected) : ", data);
+
+        await peerConnection.setRemoteDescription(new RTCSessionDescription(data.room.offer));
+        data.candidates.map(
+          async caller => {
+            console.log(`Got new remote ICE candidate: ${JSON.stringify(caller)}`);
+            await peerConnection.addIceCandidate(new RTCIceCandidate(caller));
+          })
+
+        const answer = await peerConnection.createAnswer();
+        await peerConnection.setLocalDescription(answer);
+        const roomWithAnswer = {
+          answer: {
+            type: answer.type,
+            sdp: answer.sdp,
+          },
+        };
+        socket.emit('save room with answer', { room: { answer: roomWithAnswer.answer }, id: 'uniqueID' })
+
+      })
+
+      if (localStream) {
+        localStream.getTracks().forEach((track) => {
+          console.log("ADD_TRACK", track);
+          peerConnection.addTrack(track, localStream);
+        });
+      }
+
+      peerConnection.addEventListener('icecandidate', async (event: RTCPeerConnectionIceEvent) => {
+        if (event.candidate) {
+          socket.emit('save callee candidate', { id: 'smartphone: 1', candidate: event.candidate })
+        } else {
+          console.log('ICE candidate gathering completed.');
+        }
+
+      });
+
+      const remoteStream = new MediaStream();
+
+      if (remoteVideoRef.current) {
+        console.log("REMOTE_VIDEO_REF", remoteVideoRef.current);
+        remoteVideoRef.current.srcObject = remoteStream;
+      }
+
     };
 
     initializeMediaStream(peerConnection, socket);
 
   }, []);
-
-  // INITIALIZE PEER CONNECTION WITH LOCAL STREAM :
-  const initializePeerConnection = async (peerConnection: RTCPeerConnection, localStream: MediaStream, socket: Socket) => {
-
-    socket.on('fan connected', async (data: { room: { offer: RTCSessionDescription }, candidates: RTCIceCandidate[] }) => {
-
-      console.log("SOCKET on(fan connected) : ", data);
-
-      await peerConnection.setRemoteDescription(new RTCSessionDescription(data.room.offer));
-      data.candidates.map(
-        async caller => {
-          console.log(`Got new remote ICE candidate: ${JSON.stringify(caller)}`);
-          await peerConnection.addIceCandidate(new RTCIceCandidate(caller));
-        })
-
-      const answer = await peerConnection.createAnswer();
-      await peerConnection.setLocalDescription(answer);
-      const roomWithAnswer = {
-        answer: {
-          type: answer.type,
-          sdp: answer.sdp,
-        },
-      };
-      socket.emit('save room with answer', { room: { answer: roomWithAnswer.answer }, id: 'uniqueID' })
-
-    })
-
-    if (localStream) {
-      localStream.getTracks().forEach((track) => {
-        console.log("ADD_TRACK", track);
-        peerConnection.addTrack(track, localStream);
-      });
-    }
-
-    peerConnection.addEventListener('icecandidate', async (event: RTCPeerConnectionIceEvent) => {
-      if (event.candidate) {
-        socket.emit('save callee candidate', { id: 'smartphone: 1', candidate: event.candidate })
-      } else {
-        console.log('ICE candidate gathering completed.');
-      }
-
-    });
-
-    const remoteStream = new MediaStream();
-
-    if (remoteVideoRef.current) {
-      console.log("REMOTE_VIDEO_REF", remoteVideoRef.current);
-      remoteVideoRef.current.srcObject = remoteStream;
-    }
-
-  };
 
   return (
     <div>
