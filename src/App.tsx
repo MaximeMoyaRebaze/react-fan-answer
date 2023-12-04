@@ -18,7 +18,7 @@ const App: React.FC = () => {
   };
 
   // BACKEND :
-  const serverUrlSocket = 'http://83.113.50.18:3001/'
+  const serverUrlSocket = 'http://localhost:3001/'
 
   // REF :
   const localVideoRef = useRef<HTMLVideoElement>(null);
