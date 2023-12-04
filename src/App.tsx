@@ -166,19 +166,15 @@ const App: React.FC = () => {
 
     // await peerConnection.setRemoteDescription(new RTCSessionDescription(data.room.offer));
 
-    const answer = await peerConnection.createAnswer();
-    console.log('Created answer:', answer);
-    await peerConnection.setLocalDescription(answer);
-    const roomWithAnswer = {
-      answer: {
-        type: answer.type,
-        sdp: answer.sdp,
-      },
-    };
-
-    socket.emit('save room with answer', { room: { answer: roomWithAnswer.answer }, id: '10' }, (response: any) => {
-      console.log('Response from socket emit save room with answer : ', response);
-    })
+    // const answer = await peerConnection.createAnswer();
+    // console.log('Created answer:', answer);
+    // await peerConnection.setLocalDescription(answer);
+    // const roomWithAnswer = {
+    //   answer: {
+    //     type: answer.type,
+    //     sdp: answer.sdp,
+    //   },
+    // };
 
     // const responseSaveAnswer = await fetch(serverUrl + "save-room-with-answer", {
     //   method: 'POST',
