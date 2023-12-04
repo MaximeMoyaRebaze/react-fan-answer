@@ -1,6 +1,7 @@
 import './App.css'
 import React, { useEffect, useRef } from 'react';
 import io, { Socket } from 'socket.io-client'
+import { v4 as uuidv4 } from 'uuid';
 
 const App: React.FC = () => {
 
@@ -22,7 +23,6 @@ const App: React.FC = () => {
 
   // REF :
   const localVideoRef = useRef<HTMLVideoElement>(null);
-  const remoteVideoRef = useRef<HTMLVideoElement>(null);
 
   // INITIALIZE :
   useEffect(() => {
@@ -58,7 +58,7 @@ const App: React.FC = () => {
             sdp: answer.sdp,
           },
         };
-        socket.emit('save room with answer', { room: { answer: roomWithAnswer.answer }, id: 'uniqueID' })
+        socket.emit('save room with answer', { room: { answer: roomWithAnswer.answer }, id: 'Cellphone_' + uuidv4() })
 
       })
 
