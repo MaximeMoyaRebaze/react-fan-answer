@@ -80,31 +80,7 @@ const App: React.FC = () => {
 
     peerConnection.addEventListener('icecandidate', async (event: RTCPeerConnectionIceEvent) => {
       if (event.candidate) {
-        console.log("EVENT_ICE_CANDIDATE", event.candidate);
-
-        // Send the ICE candidate to the remote peer
-        // For simplicity, you can use a signaling server or a WebSocket to exchange ICE candidates
-        // Example: socket.emit('candidate', event.candidate.toJSON());
         socket.emit('save callee candidate', { id: 'smartphone: 1', candidate: event.candidate })
-
-        // try {
-        //   const response = await fetch(serverUrl + "save-callee-candidates", {
-        //     method: 'POST',
-        //     headers: {
-        //       'Content-Type': 'application/json',
-        //     },
-        //     body: JSON.stringify(event.candidate),
-        //   });
-        //   if (!response.ok) {
-        //     throw new Error('Request failed');
-        //   }
-        //   const data: RTCIceCandidate = await response.json();
-        //   console.log("Fetch save callee candidates response : ", data);
-        // } catch (error) {
-        //   console.error('An error occurred:', error);
-        //   throw error;
-        // }
-
       } else {
         console.log('ICE candidate gathering completed.');
       }
