@@ -19,32 +19,33 @@ const App: React.FC = () => {
   };
 
   // BACKEND :
-  const serverUrlSocket = 'http://localhost:3001/'
+  const serverUrlSocket = 'http://localhost:3001/fan'
 
   // REF :
   const localVideoRef = useRef<HTMLVideoElement>(null);
 
   // INITIALIZE :
   useEffect(() => {
-    const peerConnection = new RTCPeerConnection(configurationIceServer);
 
-    const socket = io(serverUrlSocket);
-    socket.on('connect', () => {
-      console.log('SOCKET CONNECTED');
-    });
 
-    const initializeMediaStream = async (peerConnection: RTCPeerConnection, socket: Socket) => {
 
+    const initializeMediaStream = async () => {
       const localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
       if (localVideoRef.current) {
         localVideoRef.current.srcObject = localStream;
       }
-
+      const peerConnection = new RTCPeerConnection(configurationIceServer);
       const cellphoneId = 'Cellphone_' + uuidv4()
+      const socket = io(serverUrlSocket);
+      socket.on('connect', () => {
+        console.log('SOCKET CONNECTED');
 
+      })
+
+      socket.emit("get room infos")
       socket.on('fan connected', async (data: { room: { offer: RTCSessionDescription }, candidates: RTCIceCandidate[] }) => {
 
-        console.log("SOCKET on(fan connected) : ", data);
+        console.log("SOCKET on fan connected) : ", data);
 
         await peerConnection.setRemoteDescription(new RTCSessionDescription(data.room.offer));
         data.candidates.map(
@@ -83,7 +84,7 @@ const App: React.FC = () => {
 
     };
 
-    initializeMediaStream(peerConnection, socket);
+    initializeMediaStream();
 
   }, []);
 
@@ -93,6 +94,7 @@ const App: React.FC = () => {
         <h1>FAN</h1>
         <h2>Local Video</h2>
         <video ref={localVideoRef} autoPlay playsInline muted />
+
       </div>
     </div>
   );
