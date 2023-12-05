@@ -42,7 +42,7 @@ const App: React.FC = () => {
 
       })
 
-      socket.emit("get room infos")
+
       socket.on('fan connected', async (data: { room: { offer: RTCSessionDescription }, candidates: RTCIceCandidate[] }) => {
 
         console.log("SOCKET on fan connected) : ", data);
