@@ -1,8 +1,10 @@
 import './App.css'
+
 import React, { useEffect, useRef } from 'react';
+
 import * as Implementations from './Implementations'
 
-const App: React.FC = () => {
+export const App: React.FC = () => {
 
   const serverUrlSocket = 'http://localhost:3001/fan'
   // const serverUrlSocket = 'http://83.113.50.18:3001/fan'
@@ -15,7 +17,7 @@ const App: React.FC = () => {
 
       const localStream = await Implementations.createLocalStream(localVideoRef)
 
-      const socket = await Implementations.createSocketConnetion(serverUrlSocket)
+      const socket = Implementations.createSocketConnetion(serverUrlSocket)
 
       const cellphoneId = Implementations.createCellphoneUUID()
 
@@ -37,5 +39,3 @@ const App: React.FC = () => {
     </div>
   );
 };
-
-export default App;

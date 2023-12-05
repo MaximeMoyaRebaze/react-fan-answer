@@ -1,4 +1,5 @@
-import io, { Socket } from 'socket.io-client'
+import type { Socket } from 'socket.io-client';
+import io from 'socket.io-client'
 import { v4 as uuidv4 } from 'uuid';
 
 // TURN ICE SERVER CONFIG :
@@ -29,7 +30,7 @@ export function createCellphoneUUID() {
 }
 
 // SOCKET :
-export async function createSocketConnetion(serverUrlSocket: string) {
+export function createSocketConnetion(serverUrlSocket: string) {
     const socket = io(serverUrlSocket);
     socket.on('connect', () => {
         console.log('SOCKET CONNECTED');
@@ -43,9 +44,9 @@ export function createPeerConnection(localStream: MediaStream, socket: Socket, c
     const peerConnection = new RTCPeerConnection(configurationIceServer);
 
     // PEER CONNECTION EVENT LISTENER :
-    peerConnection.addEventListener('icecandidate', async (event: RTCPeerConnectionIceEvent) => {
+    peerConnection.addEventListener('icecandidate', (event: RTCPeerConnectionIceEvent) => {
         if (event.candidate) {
-            socket.emit('save callee candidate', { candidate: event.candidate, id: cellphoneId })
+            socket.emit('save fan callee candidate for regie', { candidate: event.candidate, id: cellphoneId })
         } else {
             console.log('ICE candidate gathering completed.');
         }
@@ -61,7 +62,7 @@ export function createPeerConnection(localStream: MediaStream, socket: Socket, c
     }
 
     // SOCKET LISTENER :
-    socket.on('fan connected', async (data: { room: { offer: RTCSessionDescription }, candidates: RTCIceCandidate[] }) => {
+    socket.on('fan connected with regie', async (data: { room: { offer: RTCSessionDescription }, candidates: RTCIceCandidate[] }) => {
 
         console.log("SOCKET on fan connected) : ", data);
 
@@ -82,7 +83,7 @@ export function createPeerConnection(localStream: MediaStream, socket: Socket, c
             },
         };
 
-        socket.emit('save room with answer', { room: { answer: roomWithAnswer.answer }, id: cellphoneId })
+        socket.emit('save fan room with answer for regie', { room: { answer: roomWithAnswer.answer }, id: cellphoneId })
 
     })
 
