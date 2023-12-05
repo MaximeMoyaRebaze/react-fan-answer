@@ -27,7 +27,7 @@ const App: React.FC = () => {
   // INITIALIZE :
   useEffect(() => {
 
-
+    console.log("INITIALIZE")
 
     const initializeMediaStream = async () => {
       const localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
