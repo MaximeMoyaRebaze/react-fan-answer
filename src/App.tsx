@@ -27,9 +27,9 @@ export const App: React.FC = () => {
 
       const socket = Implementations.createSocketConnection(serverUrlSocket)
 
-      const cellphoneId = Implementations.createCellphoneUUID()
 
-      Implementations.createPeerConnection(localStream, socket, cellphoneId)
+
+      Implementations.createPeerConnection(localStream, socket)
 
     };
 

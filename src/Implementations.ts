@@ -24,10 +24,7 @@ export async function createLocalStream(localVideoRef: React.RefObject<HTMLVideo
     return localStream
 }
 
-// CELLPHONE UUID :
-export function createCellphoneUUID() {
-    return 'Cellphone_' + uuidv4()
-}
+
 
 // SOCKET :
 export function createSocketConnection(serverUrlSocket: string) {
@@ -39,7 +36,7 @@ export function createSocketConnection(serverUrlSocket: string) {
 }
 
 // PEERCONNECTION :
-export function createPeerConnection(localStream: MediaStream, socket: Socket, cellphoneId: string) {
+export function createPeerConnection(localStream: MediaStream, socket: Socket) {
 
     const peerConnection = new RTCPeerConnection(configurationIceServer);
 
