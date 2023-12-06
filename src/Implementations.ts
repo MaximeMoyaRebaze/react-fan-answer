@@ -30,7 +30,7 @@ export function createCellphoneUUID() {
 }
 
 // SOCKET :
-export function createSocketConnetion(serverUrlSocket: string) {
+export function createSocketConnection(serverUrlSocket: string) {
     const socket = io(serverUrlSocket);
     socket.on('connect', () => {
         console.log('SOCKET CONNECTED');
@@ -43,15 +43,7 @@ export function createPeerConnection(localStream: MediaStream, socket: Socket, c
 
     const peerConnection = new RTCPeerConnection(configurationIceServer);
 
-    // PEER CONNECTION EVENT LISTENER :
-    peerConnection.addEventListener('icecandidate', (event: RTCPeerConnectionIceEvent) => {
-        if (event.candidate) {
-            socket.emit('save fan callee candidate for regie', { candidate: event.candidate, id: cellphoneId })
-        } else {
-            console.log('ICE candidate gathering completed.');
-        }
 
-    });
 
     // ADD LOCAL STREAM TRACKS :
     if (localStream) {
@@ -62,10 +54,18 @@ export function createPeerConnection(localStream: MediaStream, socket: Socket, c
     }
 
     // SOCKET LISTENER :
-    socket.on('fan connected with regie', async (data: { room: { offer: RTCSessionDescription }, candidates: RTCIceCandidate[] }) => {
+    socket.on('fan connected with regie', async (data: { room: { offer: RTCSessionDescription }, candidates: RTCIceCandidate[], fanRoomId: string }) => {
 
         console.log("SOCKET on fan connected) : ", data);
+        // PEER CONNECTION EVENT LISTENER :
+        peerConnection.addEventListener('icecandidate', (event: RTCPeerConnectionIceEvent) => {
+            if (event.candidate) {
+                socket.emit('save fan callee candidate for regie', { candidate: event.candidate, id: data.fanRoomId })
+            } else {
+                console.log('ICE candidate gathering completed.');
+            }
 
+        });
         await peerConnection.setRemoteDescription(new RTCSessionDescription(data.room.offer));
         data.candidates.map(
             async caller => {
@@ -83,7 +83,7 @@ export function createPeerConnection(localStream: MediaStream, socket: Socket, c
             },
         };
 
-        socket.emit('save fan room with answer for regie', { room: { answer: roomWithAnswer.answer }, id: cellphoneId })
+        socket.emit('save fan room with answer for regie', { room: { answer: roomWithAnswer.answer }, id: data.fanRoomId })
 
     })
 
