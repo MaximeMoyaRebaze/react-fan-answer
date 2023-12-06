@@ -32,6 +32,6 @@
     "eslint-plugin-simple-import-sort": "10.0.0",
     "eslint-plugin-sort-destructure-keys": "1.5.0",
     "typescript": "^5.2.2",
-    "vite": "^5.0.0"
+    "vite": "^5.0.6"
   }
 }
