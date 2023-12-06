@@ -1,5 +1,5 @@
-const fastify = require("fastify")({ logger: true });
-const path = require("path");
+import fastify from "fastify";
+import path from "path";
 
 fastify.register(require("@fastify/static"), {
   root: path.join(__dirname, "dist"),
