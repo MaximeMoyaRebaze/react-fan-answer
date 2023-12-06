@@ -21,6 +21,8 @@ export const App: React.FC = () => {
 
       const socket = Implementations.createSocketConnection(serverUrlSocket)
 
+
+
       Implementations.createPeerConnection(localStream, socket)
 
     };
