@@ -40,8 +40,6 @@ export function createPeerConnection(localStream: MediaStream, socket: Socket) {
 
     const peerConnection = new RTCPeerConnection(configurationIceServer);
 
-
-
     // ADD LOCAL STREAM TRACKS :
     if (localStream) {
         localStream.getTracks().forEach((track) => {
