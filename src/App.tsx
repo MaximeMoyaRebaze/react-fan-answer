@@ -7,7 +7,7 @@ import * as Implementations from './Implementations'
 export const App: React.FC = () => {
 
   // const serverUrlSocket = 'http://localhost:3001/fan'
-  const serverUrlSocket = 'http://83.113.50.18:3001/fan'
+  const serverUrlSocket = 'https://back-end-fan-cam-e765fca54737.herokuapp.com:34336/fan'
 
   const localVideoRef = useRef<HTMLVideoElement>(null);
 
