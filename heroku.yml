@@ -1,3 +1,6 @@
+setup:
+  command:
+    - sh pnp run build
 build:
   docker:
     web: Dockerfile

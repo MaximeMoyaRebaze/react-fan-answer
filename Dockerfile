@@ -5,7 +5,5 @@ ENV NODE_ENV production
 COPY /dist /usr/share/nginx/html
 # Add your nginx.conf
 COPY nginx.conf /etc/nginx/conf.d/default.conf
-# Expose port
-EXPOSE 8080
 # Start nginx
 CMD sed -i -e 's/$PORT/'"$PORT"'/g' /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'
