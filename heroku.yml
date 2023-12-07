@@ -1,6 +1,3 @@
 build:
-  scripts:
-    - npm install
-    - npm run build
   docker:
     web: Dockerfile
