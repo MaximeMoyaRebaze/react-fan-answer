@@ -44,7 +44,13 @@ export function createPeerConnection(localStream: MediaStream, socket: Socket) {
     if (localStream) {
         localStream.getTracks().forEach((track) => {
             console.log("ADD_TRACK", track);
-            peerConnection.addTrack(track, localStream);
+            const sender = peerConnection.addTrack(track, localStream);
+            // const sender = peerConnection.getSenders().find((s) => s.track === videoTrack);
+            const params = sender.getParameters();
+            params.encodings[0].maxBitrate = 300000;
+            params.encodings[0].maxFramerate = 25;
+            params.encodings[0].scaleResolutionDownBy
+            sender.setParameters(params);
         });
     }
 
@@ -61,14 +67,16 @@ export function createPeerConnection(localStream: MediaStream, socket: Socket) {
             }
 
         });
+
         await peerConnection.setRemoteDescription(new RTCSessionDescription(data.room.offer));
         data.candidates.map(
             async caller => {
-
                 console.log(`Got new remote ICE candidate: ${JSON.stringify(caller)}`);
-
                 await peerConnection.addIceCandidate(new RTCIceCandidate(caller));
             })
+
+
+
         const answer = await peerConnection.createAnswer();
         await peerConnection.setLocalDescription(answer);
         const roomWithAnswer = {
