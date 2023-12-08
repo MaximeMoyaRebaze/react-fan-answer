@@ -17,12 +17,14 @@
     "react-dom": "^18.2.0",
     "socket.io-client": "^4.7.2",
     "uuid": "^9.0.1",
+    "fmt": "dprint fmt",
     "vite": "^5.0.6"
   },
   "devDependencies": {
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",
     "@types/socket.io-client": "^3.0.0",
+    "dprint": "0.43.2",
     "@types/uuid": "^9.0.7",
     "@typescript-eslint/eslint-plugin": "^6.10.0",
     "@typescript-eslint/parser": "^6.10.0",
